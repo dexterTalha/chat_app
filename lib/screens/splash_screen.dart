@@ -26,7 +26,26 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         ),
         child: Column(
-          children: [],
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Card(
+              elevation: 20,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: FlutterLogo(size: 100),
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              "TABAHI CHAT APP",
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
         ),
       ),
     );
