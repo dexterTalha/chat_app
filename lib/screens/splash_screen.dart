@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tabahi_chat_app/screens/login_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -8,32 +9,25 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _animDouble;
   late Animation<Offset> _animOffset;
 
   @override
   void initState() {
-    _animController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
-    _animDouble = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeIn,
-      // reverseCurve: Curves.bounceIn,
-    );
-    _animOffset =
-        Tween<Offset>(begin: Offset(-3, 0), end: Offset(3, 0)).animate(
-      _animController,
-    );
+    _animController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
+    // _animDouble = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
+    _animDouble = Tween<double>(begin: 0.5, end: 1).animate(_animController);
     _animController.repeat(reverse: true);
-    // _animController.addListener(() {
-    //   if (_animController.isCompleted) {
-    //     _animController.reverse();
-    //   }
-    // });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,16 +50,13 @@ class _SplashScreenState extends State<SplashScreen>
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FadeTransition(
-              opacity: _animDouble,
-              child: SlideTransition(
-                position: _animOffset,
-                child: const Card(
-                  elevation: 20,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: FlutterLogo(size: 100),
-                  ),
+            ScaleTransition(
+              scale: _animDouble,
+              child: const Card(
+                elevation: 20,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: FlutterLogo(size: 100),
                 ),
               ),
             ),
