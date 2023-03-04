@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tabahi_chat_app/screens/login_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
@@ -19,8 +21,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _animController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
     // _animDouble = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
     _animDouble = Tween<double>(begin: 0.5, end: 1).animate(_animController);
-    _animController.repeat(reverse: true);
 
+    Timer(Duration(seconds: 3), () {
+      print("Hello Riyaz");
+    });
+
+    _animController.forward();
     super.initState();
   }
 
@@ -28,6 +34,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void dispose() {
     _animController.dispose();
     super.dispose();
+  }
+
+  Future<void> printName() async {
+    await Future.delayed(Duration(seconds: 5));
+    print("Hasnain Ansari");
   }
 
   @override
@@ -68,6 +79,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
               ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await printName().then((v) async {
+                  printName();
+                  print("Bye");
+                });
+                print("Hi");
+              },
+              child: Text("FUTURE EXAMPLE"),
             ),
           ],
         ),
