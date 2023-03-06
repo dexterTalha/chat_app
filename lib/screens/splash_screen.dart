@@ -22,8 +22,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // _animDouble = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
     _animDouble = Tween<double>(begin: 0.5, end: 1).animate(_animController);
 
-    Timer(Duration(seconds: 3), () {
-      print("Hello Riyaz");
+    Timer(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
     });
 
     _animController.forward();
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> printName() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 5));
     print("Hasnain Ansari");
   }
 
@@ -79,17 +79,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await printName().then((v) async {
-                  printName();
-                  print("Bye");
-                });
-                print("Hi");
-              },
-              child: Text("FUTURE EXAMPLE"),
             ),
           ],
         ),
