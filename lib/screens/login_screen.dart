@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tabahi_chat_app/components/my_text_form_field.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,6 +10,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool isPasswordHidden = true;
+  final TextEditingController _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,36 +32,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    hintText: "Enter user/email id",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: MyTheme.primaryContainerLight,
-                  ),
-                ),
+              MyTextField(
+                hintText: "Enter user/email id",
+                controller: _emailController,
               ),
               const SizedBox(height: 2),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
-                  obscureText: true,
-                  decoration: const InputDecoration(
+                  obscureText: isPasswordHidden,
+                  decoration: InputDecoration(
                     hintText: "Enter password",
                     suffix: Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Icon(Icons.visibility),
+                      padding: const EdgeInsets.only(right: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          isPasswordHidden = !isPasswordHidden;
+                          setState(() {});
+
+                          ///  condition ? true : false
+                        },
+                        child: Icon(isPasswordHidden
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                      ),
                     ),
-                    border: OutlineInputBorder(
+                    border: const OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(15),
@@ -75,6 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     print("LOGIN");
+                    print(_emailController.text);
+                    _emailController.text = "";
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: MyTheme.primary,
