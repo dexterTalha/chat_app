@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tabahi_chat_app/components/my_text_form_field.dart';
+import 'package:tabahi_chat_app/controller/login_controller.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,8 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isPasswordHidden = true;
   final TextEditingController _emailController = TextEditingController();
+  final LoginController _loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -39,33 +41,30 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 2),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  obscureText: isPasswordHidden,
-                  decoration: InputDecoration(
-                    hintText: "Enter password",
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          isPasswordHidden = !isPasswordHidden;
-                          setState(() {});
-
-                          ///  condition ? true : false
-                        },
-                        child: Icon(isPasswordHidden
-                            ? Icons.visibility
-                            : Icons.visibility_off),
+                child: Obx(
+                  () => TextFormField(
+                    obscureText: _loginController.isPasswordHidden.value,
+                    decoration: InputDecoration(
+                      hintText: "Enter password",
+                      suffix: Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            _loginController.isPasswordHidden(!_loginController.isPasswordHidden.value);
+                          },
+                          child: Icon(_loginController.isPasswordHidden.value ? Icons.visibility : Icons.visibility_off),
+                        ),
                       ),
-                    ),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
                       ),
+                      filled: true,
+                      fillColor: MyTheme.primaryContainerLight,
                     ),
-                    filled: true,
-                    fillColor: MyTheme.primaryContainerLight,
                   ),
                 ),
               ),
@@ -94,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
