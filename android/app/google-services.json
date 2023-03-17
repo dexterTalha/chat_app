@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "519802138233",
+    "project_id": "chatapp-cb6a0",
+    "storage_bucket": "chatapp-cb6a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519802138233:android:2e91fc8efee37df2ba2ea8",
+        "android_client_info": {
+          "package_name": "com.example.tabahi_chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519802138233-b37bafhprsjrcqgsrs3sktla13u3kpoa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlQ6cNyKxmwLz9dnj2VeAAm5yZ-dtkVU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519802138233-b37bafhprsjrcqgsrs3sktla13u3kpoa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

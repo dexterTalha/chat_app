@@ -7,12 +7,8 @@ class MyTextField extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Color? fillColor;
   final TextEditingController? controller;
-  const MyTextField(
-      {super.key,
-      this.hintText,
-      this.borderRadius,
-      this.fillColor,
-      this.controller});
+  final String? Function(String?)? validator;
+  const MyTextField({super.key, this.hintText, this.borderRadius, this.fillColor, this.controller, this.validator});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +17,7 @@ class MyTextField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         textInputAction: TextInputAction.next,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
           border: OutlineInputBorder(
