@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/components/my_text_form_field.dart';
 import 'package:tabahi_chat_app/controller/login_controller.dart';
+import 'package:tabahi_chat_app/screens/sign_up_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -118,6 +119,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpScreen()));
+                  },
+                  child: const Text("New User? SignUp"),
                 ),
               ],
             ),
