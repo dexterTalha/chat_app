@@ -147,7 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (!(_formKey.currentState?.validate() ?? true)) {
+                      if (!_formKey.currentState!.validate()) {
                         return;
                       }
                       String name = _nameController.text;
