@@ -11,6 +11,7 @@ class LoginController extends GetxController {
 
   User? _user;
   Rx<User?> get currentUser => _user.obs;
+  RxBool isSignUpLoading = false.obs;
 
   Future<void> signInWithPassword({String? email, String? password}) async {
     try {
@@ -38,7 +39,9 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<void> createUserWithEmailPassword({String? name, String? mobile, String? email, String? password}) async {
+  Future<bool> createUserWithEmailPassword({String? name, String? mobile, String? email, String? password}) async {
+    isSignUpLoading(true);
+    bool result = false;
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email ?? "",
@@ -53,12 +56,7 @@ class LoginController extends GetxController {
           'email': email,
           'mobile': mobile,
         });
-        // _db.collection("collectionPath").add({
-        //   'uid': _user?.uid,
-        //   'name': name,
-        //   'email': email,
-        //   'mobile': mobile,
-        // });
+        result = true;
       } else {
         print(credential.additionalUserInfo);
       }
@@ -73,5 +71,7 @@ class LoginController extends GetxController {
     } catch (e) {
       print(e);
     }
+    isSignUpLoading(false);
+    return result;
   }
 }

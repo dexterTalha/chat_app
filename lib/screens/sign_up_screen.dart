@@ -143,38 +143,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-                      String name = _nameController.text;
-                      String email = _emailController.text;
-                      String passWord = _passwordController.text;
-                      String mobile = _phoneController.text;
-                      await _authController.createUserWithEmailPassword(
-                        name: name,
-                        mobile: mobile,
-                        email: email,
-                        password: passWord,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyTheme.primary,
-                      elevation: 8,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Center(
-                        child: Text(
-                          "Sign Up".toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
+                Obx(
+                  () => Visibility(
+                    visible: _authController.isSignUpLoading.value,
+                    replacement: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
+                          String name = _nameController.text;
+                          String email = _emailController.text;
+                          String passWord = _passwordController.text;
+                          String mobile = _phoneController.text;
+                          bool result = await _authController.createUserWithEmailPassword(
+                            name: name,
+                            mobile: mobile,
+                            email: email,
+                            password: passWord,
+                          );
+                          if (result) {
+                            Get.snackbar("User Registered", "", snackPosition: SnackPosition.BOTTOM);
+                            if (context.mounted) Navigator.pop(context);
+                          } else {
+                            Get.snackbar("User Not Registered", "", snackPosition: SnackPosition.BOTTOM);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyTheme.primary,
+                          elevation: 8,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Center(
+                            child: Text(
+                              "Sign Up".toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
                   ),
                 ),
