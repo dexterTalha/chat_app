@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tabahi_chat_app/screens/home_screen.dart';
 import 'package:tabahi_chat_app/screens/login_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
@@ -14,6 +16,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _animDouble;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -21,7 +24,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _animDouble = Tween<double>(begin: 0.5, end: 1).animate(_animController);
 
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+      bool isLogin = _auth.currentUser != null;
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => isLogin ? const HomeScreen() : const LoginScreen()));
     });
 
     _animController.forward();

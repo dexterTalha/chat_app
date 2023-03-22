@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/components/my_text_form_field.dart';
 import 'package:tabahi_chat_app/controller/login_controller.dart';
+import 'package:tabahi_chat_app/screens/home_screen.dart';
 import 'package:tabahi_chat_app/screens/sign_up_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
@@ -92,31 +93,46 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-                      String email = _emailController.text;
-                      String password = _passwordController.text;
-                      await _loginController.signInWithPassword(email: email, password: password);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyTheme.primary,
-                      elevation: 8,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Center(
-                        child: Text(
-                          "Login".toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
+                Obx(
+                  () => Visibility(
+                    visible: _loginController.isLoginLoading.value,
+                    replacement: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
+                          String email = _emailController.text;
+                          String password = _passwordController.text;
+                          String? message = await _loginController.signInWithPassword(email: email, password: password);
+                          if (message == null) {
+                            if (context.mounted) {
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
+                            }
+                          } else {
+                            Get.snackbar("FAILED", message, snackPosition: SnackPosition.BOTTOM);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyTheme.primary,
+                          elevation: 8,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Center(
+                            child: Text(
+                              "Login".toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
                   ),
                 ),

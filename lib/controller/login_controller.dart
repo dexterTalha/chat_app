@@ -12,8 +12,10 @@ class LoginController extends GetxController {
   User? _user;
   Rx<User?> get currentUser => _user.obs;
   RxBool isSignUpLoading = false.obs;
+  RxBool isLoginLoading = false.obs;
 
-  Future<void> signInWithPassword({String? email, String? password}) async {
+  Future<String?> signInWithPassword({String? email, String? password}) async {
+    isLoginLoading(true);
     try {
       final credential = await _auth.signInWithEmailAndPassword(
         email: email ?? "",
@@ -25,6 +27,7 @@ class LoginController extends GetxController {
         print(_user?.uid);
       } else {
         print(credential.additionalUserInfo);
+        return "Error";
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -34,9 +37,14 @@ class LoginController extends GetxController {
       } else {
         print(e.code);
       }
+      return e.message ?? "Error";
     } catch (e) {
       print(e);
+      return e.toString();
+    } finally {
+      isLoginLoading(false);
     }
+    return null;
   }
 
   Future<bool> createUserWithEmailPassword({String? name, String? mobile, String? email, String? password}) async {
