@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tabahi_chat_app/utils/constants.dart';
 
 class LoginController extends GetxController {
   RxBool isPasswordHidden = true.obs;
@@ -58,7 +59,7 @@ class LoginController extends GetxController {
       _user = credential.user;
       if (_user != null) {
         //SIGN UP
-        await _db.collection("Users").doc(_user?.uid).set({
+        await _db.collection(AppConstant.user).doc(_user?.uid).set({
           'uid': _user?.uid,
           'name': name,
           'email': email,
