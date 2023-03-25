@@ -24,6 +24,8 @@ class HomeController extends GetxController {
     await _db.collection(AppConstant.request).add({
       'sender': myEmail,
       'receiver': email,
+      'accepted': false,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
     });
 
     return true;
