@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tabahi_chat_app/controller/home_controller.dart';
 import 'package:tabahi_chat_app/screens/fragments/chats.dart';
 import 'package:tabahi_chat_app/screens/fragments/friends.dart';
 import 'package:tabahi_chat_app/screens/fragments/requests.dart';
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late PageController _pageController;
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   void initState() {
