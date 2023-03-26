@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
 import 'package:tabahi_chat_app/screens/fragments/chats.dart';
 import 'package:tabahi_chat_app/screens/fragments/friends.dart';
 import 'package:tabahi_chat_app/screens/fragments/requests.dart';
+import 'package:tabahi_chat_app/screens/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,7 +47,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             icon: const Icon(Icons.search),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false);
+            },
             icon: const Icon(Icons.more_vert),
           ),
         ],

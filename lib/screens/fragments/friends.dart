@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tabahi_chat_app/components/friend_row_widget.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
-import 'package:tabahi_chat_app/utils/constants.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
 class FriendFragment extends StatefulWidget {
@@ -96,28 +96,36 @@ class _FriendFragmentState extends State<FriendFragment> {
             ),
           ),
         ),
-        Expanded(
-          child: StreamBuilder(
-            stream: _db.collection(AppConstant.friends).doc(_auth.currentUser?.uid).snapshots(),
-            builder: (_, snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
-                //circular indicator
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snap.hasError) {
-                //show error
-              }
-              if (!snap.hasData) {
-                //no data
-              }
-              if (snap.data == null) {
-                return const Text("Error");
-              }
-              DocumentSnapshot<Map<String, dynamic>> data = snap.data!;
-              return Container();
-            },
-          ),
+
+        const SizedBox(
+          height: 20,
         ),
+        const FriendRowWidget(
+          email: "Test@gmail.com",
+          name: "Test",
+        ),
+        // Expanded(
+        //   child: StreamBuilder(
+        //     stream: _db.collection(AppConstant.friends).doc(_auth.currentUser?.uid).snapshots(),
+        //     builder: (_, snap) {
+        //       if (snap.connectionState == ConnectionState.waiting) {
+        //         //circular indicator
+        //         return const Center(child: CircularProgressIndicator());
+        //       }
+        //       if (snap.hasError) {
+        //         //show error
+        //       }
+        //       if (!snap.hasData) {
+        //         //no data
+        //       }
+        //       if (snap.data == null) {
+        //         return const Text("Error");
+        //       }
+        //       DocumentSnapshot<Map<String, dynamic>> data = snap.data!;
+        //       return Container();
+        //     },
+        //   ),
+        // ),
       ],
     );
   }
