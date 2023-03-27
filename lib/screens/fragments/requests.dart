@@ -46,7 +46,7 @@ class _RequestFragmentState extends State<RequestFragment> {
 
         Expanded(
           child: StreamBuilder(
-            stream: _db.collection(AppConstant.request).where('receiver', isEqualTo: _auth.currentUser?.email).snapshots(),
+            stream: _db.collection(AppConstant.request).where('receiver', isEqualTo: _auth.currentUser?.email).where('accepted', isEqualTo: false).snapshots(),
             builder: (_, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return const Center(
