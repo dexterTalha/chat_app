@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/components/friend_row_widget.dart';
+import 'package:tabahi_chat_app/controller/home_controller.dart';
+import 'package:tabahi_chat_app/screens/view_sent_request.dart';
 import 'package:tabahi_chat_app/utils/constants.dart';
 
 import '../../utils/my_theme.dart';
@@ -15,8 +16,7 @@ class RequestFragment extends StatefulWidget {
 }
 
 class _RequestFragmentState extends State<RequestFragment> {
-  final _db = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
+  final HomeController _controller = HomeController.instance;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -25,7 +25,9 @@ class _RequestFragmentState extends State<RequestFragment> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ViewSentRequest()));
+            },
             style: ElevatedButton.styleFrom(backgroundColor: MyTheme.primary),
             child: const Center(
               child: Text(
@@ -46,7 +48,8 @@ class _RequestFragmentState extends State<RequestFragment> {
 
         Expanded(
           child: StreamBuilder(
-            stream: _db.collection(AppConstant.request).where('receiver', isEqualTo: _auth.currentUser?.email).where('accepted', isEqualTo: false).snapshots(),
+            stream:
+                _controller.db.collection(AppConstant.request).where('receiver', isEqualTo: _controller.auth.currentUser?.email).where('accepted', isEqualTo: false).snapshots(),
             builder: (_, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -70,10 +73,12 @@ class _RequestFragmentState extends State<RequestFragment> {
               return ListView.builder(
                 itemCount: snap.data?.size ?? 0,
                 itemBuilder: (con, index) {
-                  final data = snap.data?.docs[index];
+                  QueryDocumentSnapshot<Map<String, dynamic>>? data = snap.data?.docs[index];
+
                   final sender = data?.get('sender');
+                  final String id = data?.id ?? "";
                   return FutureBuilder(
-                    future: _db.collection(AppConstant.user).where('email', isEqualTo: sender).get(),
+                    future: _controller.db.collection(AppConstant.user).where('email', isEqualTo: sender).get(),
                     builder: (c, futureSnap) {
                       if (futureSnap.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -88,11 +93,20 @@ class _RequestFragmentState extends State<RequestFragment> {
 
                       /// qds -> {'email': "", mob....}
                       var user = futureSnap.data?.docs.firstWhereOrNull((element) => element.get('email') == sender);
-                      print(user?.data());
+
                       return FriendRowWidget(
                         isRequest: true,
                         name: user?.get('name'),
                         email: sender,
+                        onReject: () {},
+                        onAccept: () async {
+                          bool result = await _controller.acceptRequest(id);
+                          if (result) {
+                            Get.snackbar("Request Accepted", "Friend request accepted from $sender", snackPosition: SnackPosition.BOTTOM);
+                          } else {
+                            Get.snackbar("Error", "Friend request accepted Error from $sender", snackPosition: SnackPosition.BOTTOM);
+                          }
+                        },
                       );
                     },
                   );

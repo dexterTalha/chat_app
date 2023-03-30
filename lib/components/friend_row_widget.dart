@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class FriendRowWidget extends StatelessWidget {
   final String? name;
   final String? email;
-
+  final void Function()? onAccept;
+  final void Function()? onReject;
   final bool isRequest;
-  const FriendRowWidget({super.key, this.name, this.email, this.isRequest = false});
+  const FriendRowWidget({super.key, this.name, this.email, this.isRequest = false, this.onAccept, this.onReject});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class FriendRowWidget extends StatelessWidget {
             Visibility(
               visible: isRequest,
               child: GestureDetector(
-                onTap: () {},
+                onTap: onAccept,
                 child: Container(
                   height: 30,
                   width: 30,
@@ -45,7 +46,7 @@ class FriendRowWidget extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             GestureDetector(
-              onTap: () {},
+              onTap: onReject,
               child: Container(
                 height: 30,
                 width: 30,

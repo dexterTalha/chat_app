@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tabahi_chat_app/components/friend_row_widget.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
+
+import '../../components/friend_row_widget.dart';
+import '../../utils/constants.dart';
 
 class FriendFragment extends StatefulWidget {
   const FriendFragment({super.key});
@@ -67,9 +69,7 @@ class _FriendFragmentState extends State<FriendFragment> {
                           String email = _friendEmailController.text.trim();
                           //take email and search-> if exists add to request
                           bool result = await _homeController.sendFriendRequest(email);
-                          if (!result) {
-                            Get.snackbar("No Friend Exists", "Email not exists", snackPosition: SnackPosition.BOTTOM);
-                          } else {
+                          if (result) {
                             Get.snackbar("Request Sent", "Friend request sent to $email", snackPosition: SnackPosition.BOTTOM);
                           }
                           if (_.mounted) Navigator.pop(_);
@@ -96,36 +96,60 @@ class _FriendFragmentState extends State<FriendFragment> {
             ),
           ),
         ),
-
         const SizedBox(
           height: 20,
         ),
-        const FriendRowWidget(
-          email: "Test@gmail.com",
-          name: "Test",
+        Expanded(
+          child: StreamBuilder(
+            stream: _db.collection(AppConstant.friends).where('email', isEqualTo: _homeController.auth.currentUser?.email).snapshots(),
+            builder: (_, snap) {
+              if (snap.connectionState == ConnectionState.waiting) {
+                //circular indicator
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snap.hasError) {
+                //show error
+              }
+              if (!snap.hasData) {
+                //no data
+              }
+              if (snap.data == null) {
+                return const Text("Error");
+              }
+
+              return ListView.builder(
+                itemCount: snap.data?.size ?? 0,
+                itemBuilder: (context, index) {
+                  var data = snap.data?.docs[index];
+                  String friend = data?.get('friend');
+                  bool isBlocked = data?.get('isBlocked') ?? false;
+                  return FutureBuilder(
+                    future: _homeController.db.collection(AppConstant.user).where('email', isEqualTo: friend).get(),
+                    builder: (c, futureSnap) {
+                      if (futureSnap.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (futureSnap.hasError || !futureSnap.hasData) {
+                        return const Center(
+                          child: Text("No Request"),
+                        );
+                      }
+
+                      /// qds -> {'email': "", mob....}
+                      var user = futureSnap.data?.docs.firstWhereOrNull((element) => element.get('email') == friend);
+                      return FriendRowWidget(
+                        name: user?.get('name'),
+                        email: user?.get('email'),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          ),
         ),
-        // Expanded(
-        //   child: StreamBuilder(
-        //     stream: _db.collection(AppConstant.friends).doc(_auth.currentUser?.uid).snapshots(),
-        //     builder: (_, snap) {
-        //       if (snap.connectionState == ConnectionState.waiting) {
-        //         //circular indicator
-        //         return const Center(child: CircularProgressIndicator());
-        //       }
-        //       if (snap.hasError) {
-        //         //show error
-        //       }
-        //       if (!snap.hasData) {
-        //         //no data
-        //       }
-        //       if (snap.data == null) {
-        //         return const Text("Error");
-        //       }
-        //       DocumentSnapshot<Map<String, dynamic>> data = snap.data!;
-        //       return Container();
-        //     },
-        //   ),
-        // ),
       ],
     );
   }
