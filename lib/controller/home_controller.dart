@@ -63,4 +63,32 @@ class HomeController extends GetxController {
       return false;
     }
   }
+
+  Future<bool> deleteRequest(String email, {bool isSent = false, bool isFriend = false}) async {
+    String myEmail = auth.currentUser?.email ?? "";
+
+    CollectionReference reference = db.collection(isFriend ? AppConstant.friends : AppConstant.request);
+
+    QuerySnapshot<Object?> dataList;
+    if (isFriend) {
+      dataList = await reference.where('email', isEqualTo: myEmail).where('friend', isEqualTo: email).get();
+    } else {
+      dataList = await reference.where('sender', isEqualTo: isSent ? myEmail : email).where('receiver', isEqualTo: isSent ? email : myEmail).get();
+    }
+
+    ///  [
+    ///    'docid': {
+    ///       sfjka:asdf,
+    ///
+    ///     }
+    ///  ]
+
+    if (dataList.docs.isNotEmpty) {
+      var doc = dataList.docs.first;
+      String uid = doc.id;
+      await reference.doc(uid).delete();
+      return true;
+    }
+    return false;
+  }
 }

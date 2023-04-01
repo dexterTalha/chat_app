@@ -98,7 +98,14 @@ class _RequestFragmentState extends State<RequestFragment> {
                         isRequest: true,
                         name: user?.get('name'),
                         email: sender,
-                        onReject: () {},
+                        onReject: () async {
+                          bool result = await _controller.deleteRequest(sender);
+                          if (result) {
+                            Get.snackbar("Request Removed", "Friend request removed from $sender", snackPosition: SnackPosition.BOTTOM);
+                          } else {
+                            Get.snackbar("Error", "Friend request remove Error from $sender", snackPosition: SnackPosition.BOTTOM);
+                          }
+                        },
                         onAccept: () async {
                           bool result = await _controller.acceptRequest(id);
                           if (result) {

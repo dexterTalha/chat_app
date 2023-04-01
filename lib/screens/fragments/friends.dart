@@ -142,6 +142,14 @@ class _FriendFragmentState extends State<FriendFragment> {
                       return FriendRowWidget(
                         name: user?.get('name'),
                         email: user?.get('email'),
+                        onReject: () async {
+                          bool result = await _homeController.deleteRequest(friend, isFriend: true);
+                          if (result) {
+                            Get.snackbar("Request Removed", "Friend request removed from $friend", snackPosition: SnackPosition.BOTTOM);
+                          } else {
+                            Get.snackbar("Error", "Friend request remove Error from $friend", snackPosition: SnackPosition.BOTTOM);
+                          }
+                        },
                       );
                     },
                   );
