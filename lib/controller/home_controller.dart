@@ -91,4 +91,34 @@ class HomeController extends GetxController {
     }
     return false;
   }
+
+//openr('emaial', isUnblocked : true)
+  Future<bool> operationOnFriend(String email, {bool isBlock = false}) async {
+    String myEmail = auth.currentUser?.email ?? "";
+
+    CollectionReference reference = db.collection(AppConstant.friends);
+
+    QuerySnapshot<Object?> dataList;
+    QuerySnapshot<Object?> dataList2;
+    if (isBlock) {
+      dataList = await reference.where('email', isEqualTo: email).get();
+      if (dataList.docs.isNotEmpty) {
+        var doc = dataList.docs.first;
+        String id = doc.id;
+        bool blockStatus = doc.get('isBlocked') ?? false;
+        await reference.doc(id).update({'isBlocked': blockStatus ? false : true});
+      }
+    } else {
+      dataList = await reference.where('email', isEqualTo: myEmail).where('friend', isEqualTo: email).get();
+      dataList2 = await reference.where('email', isEqualTo: email).where('friend', isEqualTo: myEmail).get();
+      if (dataList.docs.isNotEmpty && dataList2.docs.isNotEmpty) {
+        var doc = dataList.docs.first;
+        String uid = doc.id;
+        await reference.doc(uid).delete();
+        return true;
+      }
+    }
+
+    return false;
+  }
 }
