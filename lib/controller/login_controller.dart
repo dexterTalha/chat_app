@@ -84,3 +84,17 @@ class LoginController extends GetxController {
     return result;
   }
 }
+
+void _changePassword(String currentPassword, String newPassword) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+  final cred = EmailAuthProvider.credential(email: user.email ?? "", password: currentPassword);
+
+  user.reauthenticateWithCredential(cred).then((value) {
+    user.updatePassword(newPassword).then((_) {
+      //Success, do something
+    }).catchError((error) {
+      //Error, show something
+    });
+  }).catchError((err) {});
+}
