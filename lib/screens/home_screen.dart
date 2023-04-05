@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
+import 'package:tabahi_chat_app/screens/change_password_screen.dart';
 import 'package:tabahi_chat_app/screens/fragments/chats.dart';
 import 'package:tabahi_chat_app/screens/fragments/friends.dart';
 import 'package:tabahi_chat_app/screens/fragments/requests.dart';
@@ -101,44 +101,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           // ),
           PopupMenuButton(
             icon: Icon(Icons.adaptive.more),
-            onSelected: (index) {
+            onSelected: (index) async {
               if (index == 0) {
-                showDialog(
+                await showDialog(
                   barrierDismissible: true,
                   context: context,
                   builder: (_) {
-                    return AlertDialog(
+                    return CupertinoAlertDialog(
                       title: const Text('Logout?'),
                       content: const Text('Do you want to logout?'),
                       actions: [
                         TextButton(
-                          onPressed: () {
-                            FirebaseAuth.instance.signOut();
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false);
+                          onPressed: () async {
+                            await FirebaseAuth.instance.signOut();
+                            if (_.mounted && context.mounted) {
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false);
+                            }
                           },
                           child: const Text("Yes"),
                         ),
-                        if (Platform.isAndroid)
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(_);
-                            },
-                            child: const Text('No'),
-                          ),
-                        if (Platform.isIOS)
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(_);
-                            },
-                            child: const Text("No"),
-                          ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(_);
+                          },
+                          child: const Text("No"),
+                        ),
                       ],
                     );
                   },
                 );
-              }
-              if (index == 1) {
-                print('change password');
+              } else if (index == 1) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const ChangePasswordScreen()));
               }
             },
             itemBuilder: (_) {

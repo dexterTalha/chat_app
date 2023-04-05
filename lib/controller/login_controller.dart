@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tabahi_chat_app/screens/login_screen.dart';
 import 'package:tabahi_chat_app/utils/constants.dart';
 
 class LoginController extends GetxController {
@@ -80,21 +82,29 @@ class LoginController extends GetxController {
     } catch (e) {
       print(e);
     }
+    await FirebaseAuth.instance.signOut();
     isSignUpLoading(false);
     return result;
   }
-}
 
-void _changePassword(String currentPassword, String newPassword) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return;
-  final cred = EmailAuthProvider.credential(email: user.email ?? "", password: currentPassword);
+  Future<String?> changePassword(BuildContext context, String currentPassword, String newPassword) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false);
+      return null;
+    }
+    String? ret;
+    try {
+      final cred = EmailAuthProvider.credential(email: user.email ?? "", password: currentPassword);
 
-  user.reauthenticateWithCredential(cred).then((value) {
-    user.updatePassword(newPassword).then((_) {
-      //Success, do something
-    }).catchError((error) {
-      //Error, show something
-    });
-  }).catchError((err) {});
+      UserCredential userCred = await user.reauthenticateWithCredential(cred);
+      if (userCred.user != null) {
+        await user.updatePassword(newPassword);
+      }
+    } catch (e) {
+      ret = e.toString();
+    }
+
+    return ret;
+  }
 }

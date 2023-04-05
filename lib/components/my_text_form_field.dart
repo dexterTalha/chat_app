@@ -11,16 +11,7 @@ class MyTextField extends StatelessWidget {
   final TextInputType? inputType;
   final bool isObscure;
   final Widget? suffixWidget;
-  const MyTextField(
-      {super.key,
-      this.isObscure = false,
-      this.hintText,
-      this.borderRadius,
-      this.fillColor,
-      this.controller,
-      this.validator,
-      this.inputType,
-      this.suffixWidget});
+  const MyTextField({super.key, this.isObscure = false, this.hintText, this.borderRadius, this.fillColor, this.controller, this.validator, this.inputType, this.suffixWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +23,7 @@ class MyTextField extends StatelessWidget {
         textInputAction: TextInputAction.next,
         keyboardType: inputType,
         validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           hintText: hintText,
           suffix: suffixWidget,
