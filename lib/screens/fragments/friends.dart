@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
+import 'package:tabahi_chat_app/models/user_model.dart';
+import 'package:tabahi_chat_app/screens/chat_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
 
 import '../../components/friend_row_widget.dart';
@@ -139,9 +141,14 @@ class _FriendFragmentState extends State<FriendFragment> {
 
                       /// qds -> {'email': "", mob....}
                       var user = futureSnap.data?.docs.firstWhereOrNull((element) => element.get('email') == friend);
+
+                      UserModel userModel = UserModel.fromMap(user?.data() ?? {});
+                      String name = userModel.name ?? "";
+                      String email = userModel.email ?? "";
+                      String uid = userModel.uid ?? "";
                       return FriendRowWidget(
-                        name: user?.get('name'),
-                        email: user?.get('email'),
+                        name: name,
+                        email: email,
                         onReject: () async {
                           bool result = await _homeController.deleteRequest(friend, isFriend: true);
                           if (result) {
@@ -149,6 +156,9 @@ class _FriendFragmentState extends State<FriendFragment> {
                           } else {
                             Get.snackbar("Error", "Friend request remove Error from $friend", snackPosition: SnackPosition.BOTTOM);
                           }
+                        },
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatScreen()));
                         },
                       );
                     },

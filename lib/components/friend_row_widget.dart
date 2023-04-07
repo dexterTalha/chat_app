@@ -6,11 +6,13 @@ class FriendRowWidget extends StatelessWidget {
   final void Function()? onAccept;
   final void Function()? onReject;
   final bool isRequest;
-  const FriendRowWidget({super.key, this.name, this.email, this.isRequest = false, this.onAccept, this.onReject});
+  final Function()? onTap;
+  const FriendRowWidget({super.key, this.name, this.email, this.isRequest = false, this.onAccept, this.onReject, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: const FlutterLogo(
         size: 40,
       ),
