@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
+import 'package:tabahi_chat_app/models/friend_model.dart';
 import 'package:tabahi_chat_app/models/user_model.dart';
 import 'package:tabahi_chat_app/screens/chat_screen.dart';
 import 'package:tabahi_chat_app/utils/my_theme.dart';
@@ -123,8 +124,10 @@ class _FriendFragmentState extends State<FriendFragment> {
                 itemCount: snap.data?.size ?? 0,
                 itemBuilder: (context, index) {
                   var data = snap.data?.docs[index];
-                  String friend = data?.get('friend');
-                  bool isBlocked = data?.get('isBlocked') ?? false;
+                  FriendModel friendModel = FriendModel.fromMap(data?.data() ?? {});
+                  String friend = friendModel.friend ?? "";
+                  bool isBlocked = friendModel.isBlocked ?? false;
+
                   return FutureBuilder(
                     future: _homeController.db.collection(AppConstant.user).where('email', isEqualTo: friend).get(),
                     builder: (c, futureSnap) {

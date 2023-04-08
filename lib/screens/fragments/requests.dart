@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tabahi_chat_app/components/friend_row_widget.dart';
 import 'package:tabahi_chat_app/controller/home_controller.dart';
+import 'package:tabahi_chat_app/models/request_model.dart';
 import 'package:tabahi_chat_app/screens/view_sent_request.dart';
 import 'package:tabahi_chat_app/utils/constants.dart';
 
@@ -75,8 +76,9 @@ class _RequestFragmentState extends State<RequestFragment> {
                 itemBuilder: (con, index) {
                   QueryDocumentSnapshot<Map<String, dynamic>>? data = snap.data?.docs[index];
 
-                  final sender = data?.get('sender');
-                  final String id = data?.id ?? "";
+                  RequestModel requestModel = RequestModel.fromMap(data?.data() ?? {}, data?.id);
+                  String sender = requestModel.sender ?? "";
+                  String id = requestModel.id ?? "";
                   return FutureBuilder(
                     future: _controller.db.collection(AppConstant.user).where('email', isEqualTo: sender).get(),
                     builder: (c, futureSnap) {
