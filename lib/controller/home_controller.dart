@@ -9,6 +9,8 @@ class HomeController extends GetxController {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  User? get currentUser => auth.currentUser;
+
   Future<bool> sendFriendRequest(String email) async {
     var data = await db.collection(AppConstant.user).where('email', isEqualTo: email).get();
     if (data.size <= 0) {
@@ -120,5 +122,18 @@ class HomeController extends GetxController {
     }
 
     return false;
+  }
+
+  Future<void> setChattingTo(String email) async {
+    // ChattingWith
+    // ChattingWith --> uid --> friend: email,
+    print("Hello");
+    await db.collection(AppConstant.chattingWith).doc(currentUser?.uid).set({
+      'friend': email,
+    }).catchError((e) => printError());
+  }
+
+  Future<void> deleteChattingTo() async {
+    await db.collection(AppConstant.chattingWith).doc(currentUser?.uid).delete();
   }
 }

@@ -161,7 +161,7 @@ class _FriendFragmentState extends State<FriendFragment> {
                           }
                         },
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) =>  ChatScreen(friend: userModel)));
                         },
                       );
                     },
