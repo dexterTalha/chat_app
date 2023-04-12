@@ -127,7 +127,8 @@ class HomeController extends GetxController {
   Future<void> setChattingTo(String email) async {
     // ChattingWith
     // ChattingWith --> uid --> friend: email,
-    print("Hello");
+    // db.collection('Chats').doc(uid1).collection(uid2).snapshot
+
     await db.collection(AppConstant.chattingWith).doc(currentUser?.uid).set({
       'friend': email,
     }).catchError((e) => printError());
@@ -135,5 +136,20 @@ class HomeController extends GetxController {
 
   Future<void> deleteChattingTo() async {
     await db.collection(AppConstant.chattingWith).doc(currentUser?.uid).delete();
+  }
+
+  // this function used to send msg
+  Future<void> sendMessage({required String friendUid, required String msg}) async {
+    int timeStamp = DateTime.now().millisecondsSinceEpoch;
+    await db.collection(AppConstant.chats).doc(currentUser?.uid ?? "").collection(friendUid).add({
+      'msg': msg,
+      'issender': true,
+      'timestamp': timeStamp,
+    });
+    await db.collection(AppConstant.chats).doc(friendUid).collection(currentUser?.uid ?? "").add({
+      'msg': msg,
+      'issender': false,
+      'timestamp': timeStamp,
+    });
   }
 }

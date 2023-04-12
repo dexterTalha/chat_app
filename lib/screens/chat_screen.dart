@@ -16,6 +16,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final HomeController _homeController = HomeController.instance;
   late CollectionReference collection;
+  final TextEditingController _msgController = TextEditingController();
   @override
   void initState() {
     // set to whom I'm talking to
@@ -30,6 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     _homeController.deleteChattingTo();
+    _msgController.dispose();
     super.dispose();
   }
 
@@ -90,41 +92,40 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: StreamBuilder(
-                      stream: collection
-                          .where('receiver', isEqualTo: _homeController.currentUser?.uid)
-                          .where('sender', isEqualTo: _homeController.currentUser?.uid)
-                          .where('sender', isEqualTo: widget.friend.uid)
-                          .where('receiver', isEqualTo: widget.friend.uid)
-                          .snapshots(),
-                      builder: (context, snap) {
-                        if (snap.hasData) {
-                          print(snap.data?.docs.map((e) => e.toString()));
-                        }
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          reverse: true,
-                          itemCount: 4,
-                          itemBuilder: (_, index) {
-                            return Text("text $index");
-                          },
-                        );
-                      }),
+                    stream: collection.doc(_homeController.currentUser?.uid).collection(widget.friend.uid ?? "").orderBy('timestamp', descending: true).snapshots(),
+                    builder: (context, snap) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        itemCount: snap.data?.docs.length ?? 0,
+                        itemBuilder: (_, index) {
+                          Map<String, dynamic> data = snap.data?.docs[index].data() ?? {};
+                          String msg = data['msg'] ?? "";
+                          bool isSender = data['issender'] ?? false;
+                          return Text(
+                            msg,
+                            textAlign: isSender ? TextAlign.end : TextAlign.start,
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
               SizedBox(
                 height: 50,
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: MyTextField(
                         maxLines: 3,
+                        controller: _msgController,
                       ),
                     ),
                     IconButton(
-                      onPressed: () {
-                        //SEND MSG
-                        // my email, friend email, msg, isseen,
-                        // uid--> chatting to--> email
+                      onPressed: () async {
+                        _msgController.text = "";
+                        await _homeController.sendMessage(friendUid: widget.friend.uid ?? "", msg: _msgController.text.trim());
                       },
                       icon: const Icon(Icons.send),
                     ),

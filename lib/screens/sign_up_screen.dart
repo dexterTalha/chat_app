@@ -89,6 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hintText: "Enter Password",
                     isObscure: _authController.isSignUpPasswordHidden.value,
                     controller: _passwordController,
+
                     suffixWidget: Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(

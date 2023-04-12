@@ -25,7 +25,7 @@ class MyTextField extends StatelessWidget {
         textInputAction: TextInputAction.next,
         keyboardType: inputType,
         validator: validator,
-        maxLines: maxLines,
+        // maxLines: isObscure ? null : maxLines,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
           hintText: hintText,
