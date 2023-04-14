@@ -141,15 +141,28 @@ class HomeController extends GetxController {
   // this function used to send msg
   Future<void> sendMessage({required String friendUid, required String msg}) async {
     int timeStamp = DateTime.now().millisecondsSinceEpoch;
-    await db.collection(AppConstant.chats).doc(currentUser?.uid ?? "").collection(friendUid).add({
+    print("Msg ==> $msg");
+    await storeMsgData(friendUid, msg, timeStamp, true);
+    await storeMsgData(friendUid, msg, timeStamp, false);
+  }
+
+  //common function to store msg data
+  Future<void> storeMsgData(String uid, String msg, int timeStamp, [bool isSender = true, bool isSeen = false]) async {
+    await db.collection(AppConstant.chats).doc(isSender ? currentUser?.uid ?? "" : uid).collection(isSender ? uid : currentUser?.uid ?? "").add({
       'msg': msg,
-      'issender': true,
+      'issender': isSender,
       'timestamp': timeStamp,
+      'isseen': isSeen,
     });
-    await db.collection(AppConstant.chats).doc(friendUid).collection(currentUser?.uid ?? "").add({
-      'msg': msg,
-      'issender': false,
-      'timestamp': timeStamp,
-    });
+  }
+
+  //this function is used to update the [isseen] data
+  Future<void> updateIssen(String uid) async {
+    var ref = db.collection(AppConstant.chats).doc(uid).collection(currentUser?.uid ?? "");
+
+    QuerySnapshot snaps = await ref.where('isseen', isNotEqualTo: true).get();
+    for (QueryDocumentSnapshot doc in snaps.docs) {
+      await ref.doc(doc.id).update({'isseen': true}).then((value) => print("updated")).catchError((e) => print("error"));
+    }
   }
 }

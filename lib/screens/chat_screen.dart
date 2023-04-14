@@ -21,7 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     // set to whom I'm talking to
     collection = _homeController.db.collection(AppConstant.chats);
-
+    _homeController.updateIssen(widget.friend.uid ?? "");
     _homeController.setChattingTo(widget.friend.email ?? "");
     super.initState();
   }
@@ -100,6 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         itemCount: snap.data?.docs.length ?? 0,
                         itemBuilder: (_, index) {
                           Map<String, dynamic> data = snap.data?.docs[index].data() ?? {};
+                          _homeController.updateIssen(widget.friend.uid ?? "");
                           String msg = data['msg'] ?? "";
                           bool isSender = data['issender'] ?? false;
                           return Text(
@@ -124,8 +125,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     IconButton(
                       onPressed: () async {
-                        _msgController.text = "";
                         await _homeController.sendMessage(friendUid: widget.friend.uid ?? "", msg: _msgController.text.trim());
+                        _msgController.text = "";
                       },
                       icon: const Icon(Icons.send),
                     ),
