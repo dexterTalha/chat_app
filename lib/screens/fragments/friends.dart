@@ -131,17 +131,6 @@ class _FriendFragmentState extends State<FriendFragment> {
                   return FutureBuilder(
                     future: _homeController.db.collection(AppConstant.user).where('email', isEqualTo: friend).get(),
                     builder: (c, futureSnap) {
-                      if (futureSnap.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (futureSnap.hasError || !futureSnap.hasData) {
-                        return const Center(
-                          child: Text("No Request"),
-                        );
-                      }
-
                       /// qds -> {'email': "", mob....}
                       var user = futureSnap.data?.docs.firstWhereOrNull((element) => element.get('email') == friend);
 
@@ -161,7 +150,7 @@ class _FriendFragmentState extends State<FriendFragment> {
                           }
                         },
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) =>  ChatScreen(friend: userModel)));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(friend: userModel)));
                         },
                       );
                     },

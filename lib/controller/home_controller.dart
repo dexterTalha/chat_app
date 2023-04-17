@@ -154,6 +154,17 @@ class HomeController extends GetxController {
       'timestamp': timeStamp,
       'isseen': isSeen,
     });
+
+    /// sender 1
+    /// rec 2
+    /// chats -> 1 -> 2 -> random ->msgs
+    /// chats -> 2 -> 1 -> random ->msgs
+    /// chats -> 1 -> 2 -> chatList -> 2 ->{}
+    /// chats -> 2 -> 1 -> chatList -> 1 ->{}
+    await db.collection(AppConstant.chats).doc(isSender ? currentUser?.uid ?? "" : uid).collection("ChatList").doc(isSender ? uid : currentUser?.uid ?? "").set({
+      'timestamp': timeStamp,
+      'is_deleted': false,
+    });
   }
 
   //this function is used to update the [isseen] data
