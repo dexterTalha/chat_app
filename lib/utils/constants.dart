@@ -4,4 +4,5 @@ class AppConstant {
   static const String request = "Requests";
   static const String chattingWith = "ChattingWith";
   static const String chats = "Chats";
+  static const String blockList = "BlockList";
 }

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tabahi_chat_app/models/user_model.dart';
+import 'package:tabahi_chat_app/utils/block_enum.dart';
 import 'package:tabahi_chat_app/utils/constants.dart';
 
 class HomeController extends GetxController {
@@ -139,11 +141,13 @@ class HomeController extends GetxController {
   }
 
   // this function used to send msg
-  Future<void> sendMessage({required String friendUid, required String msg}) async {
+  Future<void> sendMessage({required String friendUid, required String msg, BlockStatus status = BlockStatus.NONE}) async {
     int timeStamp = DateTime.now().millisecondsSinceEpoch;
     print("Msg ==> $msg");
     await storeMsgData(friendUid, msg, timeStamp, true);
-    await storeMsgData(friendUid, msg, timeStamp, false);
+    if (status == BlockStatus.NONE) {
+      await storeMsgData(friendUid, msg, timeStamp, false);
+    }
   }
 
   //common function to store msg data
@@ -175,5 +179,34 @@ class HomeController extends GetxController {
     for (QueryDocumentSnapshot doc in snaps.docs) {
       await ref.doc(doc.id).update({'isseen': true}).then((value) => print("updated")).catchError((e) => print("error"));
     }
+  }
+
+  Future<void> blockUser(UserModel friend) async {
+    await db.collection(AppConstant.blockList).add({
+      'uid': currentUser?.uid,
+      'blocked': friend.uid,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  Future<void> unBlockUser(UserModel friend) async {
+    // await db.collection(AppConstant.blockList).add({
+    //   'uid': currentUser?.uid,
+    //   'blocked': friend.uid,
+    //   'timestamp': DateTime.now().millisecondsSinceEpoch,
+    // });
+    var blockData = await db.collection(AppConstant.blockList).where('blocked', isEqualTo: friend.uid).where('uid', isEqualTo: currentUser?.uid).get();
+    if (blockData.docs.isNotEmpty) {
+      String id = blockData.docs.first.id;
+      await db.collection(AppConstant.blockList).doc(id).delete();
+    }
+  }
+
+  Future<BlockStatus> getBlockStatus(UserModel friend) async {
+    var blockData = await db.collection(AppConstant.blockList).where('blocked', isEqualTo: friend.uid).where('uid', isEqualTo: currentUser?.uid).get();
+    if (blockData.docs.isNotEmpty) return BlockStatus.FRIENDBLOCKED;
+    blockData = await db.collection(AppConstant.blockList).where('uid', isEqualTo: friend.uid).where('friend', isEqualTo: currentUser?.uid).get();
+    if (blockData.docs.isNotEmpty) return BlockStatus.SELFBLOCKED;
+    return BlockStatus.NONE;
   }
 }
